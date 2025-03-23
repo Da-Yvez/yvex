@@ -1,0 +1,10 @@
+.env
+.env.encrypted
+.env.key
+
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+
+# Ignore virtual environments
+venv/

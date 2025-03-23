@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YVEX Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dash.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <span class="welcome-text">Welcome, {{ current_user.name|capitalize }}!</span>
+        </div>
+        <div class="brand-container">
+            <div class="brand-text">YVEX</div>
+        </div>
+        <div class="header-right">
+            <div class="nav-container">
+                <a href="{{ url_for('select_department') }}" class="change-dept-btn">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Change</span>
+                </a>
+                <button class="icon-btn" id="settingsBtn" onclick="handleSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <a href="{{ url_for('logout') }}" class="icon-btn"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Department Settings Modal -->
+    <div id="departmentSettingsModal" class="modal">
+        <div class="modal-content glass-effect">
+            <span class="close">&times;</span>
+            
+            <!-- Initial Options View -->
+            <div id="settingsOptions" class="settings-options">
+                <i class="fas fa-cog warning-icon"></i>
+                <h2>Department Settings</h2>
+                <p class="settings-message">Choose an action to manage department settings</p>
+                
+                <div class="settings-buttons">
+                    <button id="updateSettingsBtn" class="settings-btn">
+                        <i class="fas fa-edit"></i>
+                        Update Department Settings
+                    </button>
+                    <button class="settings-btn" data-action="logs">
+                        <i class="fas fa-history"></i>
+                        Logs
+                    </button>
+                    <button class="settings-btn" data-action="delete">
+                        <i class="fas fa-trash"></i>
+                        Delete Department
+                    </button>
+                </div>
+            </div>
+
+            <!-- Update Settings Form (Initially Hidden) -->
+            <div id="updateSettingsForm" class="settings-confirmation" style="display: none;">
+                <i class="fas fa-cog warning-icon"></i>
+                <h2>Update Department Settings</h2>
+                <p class="settings-message">Modify department name or update security credentials</p>
+                
+                <form id="updateDepartmentForm">
+                    <div class="input-group">
+                        <label class="input-label">
+                            <i class="fas fa-building"></i>
+                            <span>Department Name</span>
+                        </label>
+                        <input type="text" name="department_name" class="form-input" placeholder="Department Name" value="{{ department }}" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">
+                            <i class="fas fa-lock"></i>
+                            <span>Current Password</span>
+                        </label>
+                        <div class="password-input-group">
+                            <input type="password" name="current_password" class="form-input" placeholder="Current Password" required>
+                            <i class="fas fa-eye-slash toggle-password"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">
+                            <i class="fas fa-key"></i>
+                            <span>New Password</span>
+                        </label>
+                        <div class="password-input-group">
+                            <input type="password" name="new_password" class="form-input" placeholder="New Password">
+                            <i class="fas fa-eye-slash toggle-password"></i>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-back">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button type="submit" class="btn-update">
+                            <i class="fas fa-save"></i>
+                            Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <section>
+            <h2>Department: {{ department }}</h2>
+
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <div class="file-actions">
+                <h3>Upload Files:</h3>
+                <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data" id="upload-form">
+                    <input type="file" id="file-input" name="file" style="display: none;">
+                    <input type="password" 
+                           id="encryption-password" 
+                           name="encryption_password" 
+                           placeholder="Enter encryption password"
+                           required
+                           style="display: none;">
+                    <button type="button" id="select-files-button">
+                        <i class="fas fa-folder-open"></i> Select Files
+                    </button>
+                    <button type="submit" id="upload-files-button" style="display: none;">
+                        <i class="fas fa-upload"></i> Upload
+                    </button>
+                    <span id="selected-file-name"></span>
+                </form>
+            </div>
+
+            <div id="password-notice" class="password-notice" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Important: Please remember this encryption password. You will need it to decrypt and download this file later.</span>
+            </div>
+
+            <div class="table-container">
+                <table class="file-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Modified</th>
+                            <th>Owner</th>
+                            <th>Public</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in files %}
+                        <tr>
+                            <td>{{ file.original_filename }}</td>
+                            <td>{{ file.type }}</td>
+                            <td>{{ file.size|filesizeformat }}</td>
+                            <td>{{ file.last_modified }}</td>
+                            <td>{{ file.owner }}</td>
+                            <td>
+                                {% if file.is_public %}
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span>Public</span>
+                                {% else %}
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <span>Private</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="dropdown-toggle"><i class="fas fa-ellipsis-v"></i></button>
+                                <div class="dropdown-menu">
+                                    {% if file.owner == current_user.name or file.is_public %}
+                                        <a href="#" onclick="downloadFile('{{ file.filename }}')">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                        <a href="#" class="rename-file" 
+                                           data-name="{{ file.filename }}"
+                                           data-original-name="{{ file.original_filename }}">
+                                           <i class="fas fa-edit"></i> Rename
+                                        </a>
+                                        <a href="#" onclick="deleteFile('{{ file.filename }}')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                        <a href="#" onclick="eraseFile('{{ file.filename }}')">
+                                            <i class="fas fa-eraser"></i> Erase
+                                        </a>
+                                    {% endif %}
+                                    {% if file.owner == current_user.name %}
+                                        <a href="#" onclick="toggleAccess('{{ file.filename }}')">
+                                            {% if file.is_public %}
+                                                <i class="fas fa-lock"></i> Make Private
+                                            {% else %}
+                                                <i class="fas fa-lock-open"></i> Make Public
+                                            {% endif %}
+                                        </a>
+                                    {% else %}
+                                        <span class="disabled-option">
+                                            <i class="fas fa-lock"></i> You're Not the Owner
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rename Modal -->
+    <div id="renameModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="rename-confirmation">
+                <i class="fas fa-edit warning-icon"></i>
+                <h2>Rename File</h2>
+                <p class="rename-message">Enter a new name for this file</p>
+                <p class="file-name"></p>
+                <form id="renameForm" method="POST">
+                    <div class="input-group">
+                        <input type="text" id="newFileName" name="new_name" required>
+                    </div>
+                    <div class="error-message"></div>
+                    <div class="button-group">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="confirm-btn">
+                            <i class="fas fa-check"></i> Rename
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Bar -->
+    <div id="loading-bar" style="display: none;">
+        <div class="file-name"></div>
+        <div class="progress"></div>
+    </div>
+
+    <!-- Download Modal -->
+    <div id="downloadModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="download-confirmation">
+                <i class="fas fa-key warning-icon"></i>
+                <h2>Decrypt & Download</h2>
+                <p class="download-message">Enter the decryption password to download this file</p>
+                <p class="file-name"></p>
+                <form id="downloadForm" method="POST">
+                    <div class="password-input-group">
+                        <input type="password" id="decryption-password" name="decryption_password" required>
+                        <i class="fas fa-eye-slash toggle-password"></i>
+                    </div>
+                    <div class="error-message"></div>
+                    <div class="button-group">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="confirm-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="delete-confirmation">
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                <h2>Delete File</h2>
+                <p class="delete-message">Are you sure you want to delete this file?</p>
+                <p class="file-name"></p>
+                <div class="button-group">
+                    <button class="cancel-btn">Cancel</button>
+                    <button class="confirm-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secure Erase Modal -->
+    <div id="eraseModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="delete-confirmation secure-erase">
+                <i class="fas fa-shield-alt warning-icon"></i>
+                <h2>Secure Erase</h2>
+                <p class="delete-message">Are you sure you want to securely erase this file?</p>
+                <p class="file-name"></p>
+                <div class="secure-note">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p><strong>This operation uses the Gutmann method:</strong></p>
+                        <ul>
+                            <li>Overwrites data 35 times with specific patterns</li>
+                            <li>Makes file recovery impossible</li>
+                            <li>Process may take several minutes</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="cancel-btn">Cancel</button>
+                    <button class="confirm-btn">Secure Erase</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification">
+        <div class="notification__message">
+            <h1></h1>
+            <p></p>
+            <button aria-label="Dismiss">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Delete Department Modal -->
+    <div id="deleteDepartmentModal" class="modal">
+        <div class="modal-content glass-effect">
+            <span class="close">&times;</span>
+            <div class="delete-confirmation">
+                <div class="modal-notifications"></div> 
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                <h2>Delete Department</h2>
+                <p class="warning-message">Warning: This action cannot be undone!</p>
+                <p class="delete-message">Enter department password to confirm deletion:</p>
+                
+                <form id="deleteDepartmentForm">
+                    <div class="input-group">
+                        <label class="input-label">
+                            <i class="fas fa-lock"></i>
+                            <span>Department Password</span>
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input type="password" name="password" class="form-input" required>
+                            <i class="fas fa-eye-slash toggle-password"></i>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-cancel">Cancel</button>
+                        <button type="submit" class="btn-delete">Delete Department</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="departmentLogsModal" class="modal">
+        <div class="modal-content glass-effect">
+            <span class="close">&times;</span>
+            <div class="logs-container">
+                <i class="fas fa-history warning-icon"></i>
+                <h2>Department Activity Logs</h2>
+                <div class="logs-content">
+                    <div class="logs-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dash.js') }}"></script>
+</body>
+</html>

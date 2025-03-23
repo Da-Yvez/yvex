@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YVEX - Configuration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/configure.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="animated-background">
+        <div class="light x1"></div>
+        <div class="light x2"></div>
+        <div class="light x3"></div>
+        <div class="light x4"></div>
+    </div>
+
+    <div class="container">
+        <div class="login-box glass-effect">
+            <!-- Add Flask message container at the top -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="notification {{ category }}" style="display: block;">
+                            <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="brand-section">
+                <div class="logo-container">
+                    <span class="logo-text">YVEX</span>
+                    <span class="logo-tagline">System Configuration</span>
+                </div>
+            </div>
+
+            <div class="login-section">
+                <h2>Configure YVEX</h2>
+
+                <div id="locked-content" class="{% if not session.get('config_unlocked') and is_configured %}{% else %}hidden{% endif %}">
+                    <div class="locked-message">
+                        <i class="fas fa-lock lock-icon"></i>
+                        <h3>Configuration Locked</h3>
+                        <p>Send the following curl command from your TrueNAS server to unlock:</p>
+                        <div class="code-block">
+                            <code>curl -X POST http://{{ request.host }}/truenas-unlock -H "X-TrueNAS-Key: YOUR_ROOT_PASSWORD"</code>
+                            <button type="button" class="copy-btn" onclick="copyCode()">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <div id="unlock-status">Waiting for unlock signal...</div>
+                        <div class="additional-links">
+                            <a href="{{ url_for('login') }}" class="back-btn">
+                                <i class="fas fa-arrow-left"></i> Back to Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="config-content" class="{% if not session.get('config_unlocked') and is_configured %}hidden{% endif %}">
+                    <div class="progress-bar">
+                        <span class="step-text active" data-step="1">IP</span>
+                        <span class="arrow">></span>
+                        <span class="step-text" data-step="2">API</span>
+                        <span class="arrow">></span>
+                        <span class="step-text" data-step="3">DATASET</span>
+                        <span class="arrow">></span>
+                        <span class="step-text" data-step="4">SSH</span>
+                        <span class="arrow">></span>
+                        <span class="step-text" data-step="5">PASSWORDS</span>
+                    </div>
+
+                    <!-- Notification Container -->
+                    
+                
+                <form method="POST" class="login-form" id="configForm">
+                    <!-- Step 1: TrueNAS IP -->
+                    <div class="step-content" id="step1">
+                        <h3>Step 1: TrueNAS IP Configuration</h3>
+                        <div class="step-notification">
+                            <div class="notification" id="ip-notification"></div>
+                        </div>
+                        <div class="input-container">
+                            <input type="text" class="form-input" id="truenas_ip" name="truenas_ip" placeholder="Enter TrueNAS IP Address">
+                            <span class="help-icon">?</span>
+                            <div class="tooltip">
+                                <ul>
+                                    <li>Enter the IP address of your TrueNAS server</li>
+                                    <li>You can find this in your TrueNAS web interface</li>
+                                    <li>Example format: 192.168.1.100</li>
+                                    <li>Make sure the server is running and accessible</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" onclick="validateIP()" class="action-btn">
+                            <i class="fas fa-satellite-dish"></i> Validate & Continue
+                        </button>
+                    </div>
+
+                    <!-- Step 2: API Key -->
+                    <div class="step-content hidden" id="step2">
+                        <h3>Step 2: API Key Configuration</h3>
+                        <div class="step-notification">
+                            <div class="notification" id="api-notification"></div>
+                        </div>
+                        <div class="input-container">
+                            <!-- Change type from "password" to "text" -->
+                            <input type="text" class="form-input" id="api_key" name="api_key" placeholder="Enter TrueNAS API Key">
+                            <span class="help-icon">?</span>
+                            <div class="tooltip">
+                                <ul>
+                                    <li>Create an API key in TrueNAS:</li>
+                                    <li>1. Log in to TrueNAS as root</li>
+                                    <li>2. Go to Credentials → API Keys</li>
+                                    <li>3. Click "Add" and create a new key</li>
+                                    <li>4. Copy and paste the key here</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" onclick="validateAPIKey()" class="action-btn">
+                            <i class="fas fa-check-circle"></i> Validate & Continue
+                        </button>
+                    </div>
+
+                    <!-- Step 3: Dataset Path -->
+                    <div class="step-content hidden" id="step3">
+                        <h3>Step 3: Dataset Configuration</h3>
+                        <div class="step-notification">
+                            <div class="notification" id="dataset-notification"></div>
+                        </div>
+                        <div class="input-container">
+                            <input type="text" class="form-input" id="dataset_path" name="dataset_path" placeholder="Enter Dataset Path">
+                            <span class="help-icon">?</span>
+                            <div class="tooltip">
+                                <ul>
+                                    <li>Specify the dataset path for YVEX</li>
+                                    <li>Format: /mnt/pool/dataset</li>
+                                    <li>Must be an existing dataset</li>
+                                    <li>Ensure proper permissions are set</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" onclick="validateDataset()" class="action-btn">
+                            <i class="fas fa-check"></i> Validate & Continue
+                        </button>
+                    </div>
+
+                    <!-- Step 4: SSH Configuration -->
+                    <div class="step-content hidden" id="step4">
+                        <h3>Step 4: SSH Configuration</h3>
+                        <div class="step-notification">
+                            <div class="notification" id="ssh-notification"></div>
+                        </div>
+                        <div class="input-container">
+                            <div class="ssh-key-display">
+                                <pre id="sshKeyContent">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCw7H... yvex-service-key</pre>
+                                <button onclick="copySSHKey()" class="btn-secondary">
+                                    <i class="fas fa-copy"></i> Copy Key
+                                </button>
+                            </div>
+                            <span class="help-icon">?</span>
+                            <div class="tooltip">
+                                <ul>
+                                    <li>Add this SSH key to TrueNAS root user:</li>
+                                    <li>1. Go to TrueNAS → Credentials → Local Users</li>
+                                    <li>2. Click on 'root' user</li>
+                                    <li>3. Add this key to "Authorized Keys"</li>
+                                    <li>4. Click "Save"</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button id="verifySSHButton" onclick="verifySSHConnection()" class="action-btn">
+                            <i class="fas fa-check"></i> Verify SSH Connection
+                        </button>
+                    </div>
+
+                    <!-- Step 5: Passwords -->
+                    <div class="step-content hidden" id="step5">
+                        <h3>Step 5: Security Configuration</h3>
+                        <div class="step-notification">
+                            <div class="notification" id="password-notification"></div>
+                        </div>
+                        <div class="input-container">
+                            <input type="password" class="form-input" id="admin_password" name="admin_password" placeholder="Set Admin Password">
+                            <span class="help-icon">?</span>
+                            <div class="tooltip">
+                                <ul>
+                                    <li>Create a strong admin password</li>
+                                    <li>Minimum 8 characters</li>
+                                    <li>Include numbers and special characters</li>
+                                    <li>This will be used for admin access</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="input-container">
+                            <input type="password" class="form-input" id="root_password" name="root_password" placeholder="Set Root Password">
+                            <span class="help-icon">?</span>
+                            <div class="tooltip">
+                                <ul>
+                                    <li>Create a strong root password</li>
+                                    <li>Different from admin password</li>
+                                    <li>Used for system-level operations</li>
+                                    <li>Store securely - cannot be recovered</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="submit" class="action-btn" >
+                            <span>Save Configuration</span>
+                            <i class="fas fa-save"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="additional-links">
+                    <a href="{{ url_for('login') }}" id="backLink">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/configure.js') }}"></script>
+    <script>
+
+        // Update progress bar
+        function updateProgress(step) {
+            const steps = document.querySelectorAll('.step-text');
+            steps.forEach((s, index) => {
+                if (index + 1 < step) {
+                    s.classList.add('completed');
+                    s.classList.remove('active');
+                } else if (index + 1 === step) {
+                    s.classList.add('active');
+                    s.classList.remove('completed');
+                } else {
+                    s.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        // Initialize progress bar and notifications
+        document.addEventListener('DOMContentLoaded', () => {
+            updateProgress(1);
+            // Test notification
+            setTimeout(() => {
+                showNotification('Ready to configure TrueNAS connection', 'success', 1);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

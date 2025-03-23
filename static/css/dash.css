@@ -1,0 +1,1321 @@
+/* Base colors */
+:root {
+    --emerald: #10B981;
+    --emerald-dark: #059669;
+    --emerald-light: #34D399;
+    --black: #0A0A0A;          /* Darker black */
+    --black-light: #141414;    /* Darker gray */
+    --black-hover: #1A1A1A;    /* Hover state */
+    --white: #E5E7EB;          /* Slightly dimmer white */
+    --border-opacity: 0.15;    /* Lower opacity for borders */
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background-color: var(--black);
+    color: var(--white);
+}
+
+header {
+    background-color: var(--black-light);
+    padding: 0.3rem 2rem;  /* Reduced from 0.5rem */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+    height: 56px;  /* Reduced from 64px */
+}
+
+.header-left {
+    flex: 1;
+    min-width: 200px;
+}
+
+.welcome-text {
+    color: var(--white);
+    opacity: 0.8;
+    font-size: 1rem;
+}
+
+.brand-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;  /* Remove gap between elements */
+    margin: 0;
+    padding: 0;
+    height: auto;  /* Let height be determined by content */
+}
+
+.brand-text {
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    background: linear-gradient(135deg, #10B981, #34D399);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: float 3s ease-in-out infinite;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    transform-origin: center;  /* Set transform origin to center */
+}
+
+.department-label {
+    font-size: 0.85rem;
+    color: var(--emerald-light);
+    opacity: 0.9;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: fadeIn 0.5s ease-out;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    transform-origin: center;  /* Set transform origin to center */
+}
+
+.brand-text::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #10B981, transparent);
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.brand-text:hover::after {
+    width: 100%;
+    left: 0;
+    box-shadow: 0 0 10px #10B981;
+}
+
+.header-right {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-container {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.change-dept-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #10B981;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.change-dept-btn:hover {
+    background-color: #059669;
+    transform: translateY(-1px);
+}
+
+.icon-btn {
+    color: var(--white);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.icon-btn:hover {
+    opacity: 1;
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-2px);  /* Reduced float distance */
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(2px);  /* Reduced distance */
+    }
+    to {
+        opacity: 0.9;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    header {
+        padding: 1rem;
+    }
+
+    .header-left, .header-right {
+        min-width: 150px;
+    }
+
+    .brand-text {
+        font-size: 1.5rem;
+    }
+
+    .department-label {
+        font-size: 0.75rem;
+    }
+
+    .change-dept-btn span {
+        display: none;
+    }
+
+    .change-dept-btn {
+        padding: 0.5rem;
+    }
+
+    .nav-container {
+        gap: 0.5rem;
+    }
+}
+
+main {
+    margin-top: 10px;  /* Reduced from 20px */
+    padding: 20px;
+}
+
+/* Add some margin to the section title for better spacing */
+main section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--white);
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.flash-message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid;
+    font-size: 16px;
+}
+
+.flash-message.success {
+    background-color: #dff0d8; /* Green background color */
+    color: #3c763d; /* Dark green text color */
+    border-color: #d6e9c6; /* Border color to match the background */
+}
+
+.flash-message.error {
+    background-color: #f8d7da; /* Red background color */
+    color: #721c24; /* Dark red text color */
+    border-color: #f5c6cb; /* Border color to match the background */
+}
+
+.flash-message.warning {
+    background-color: #fcf8e3; /* Yellow background color */
+    color: #8a6d3b; /* Dark yellow text color */
+    border-color: #faebcc; /* Border color to match the background */
+}
+
+.file-actions {
+    margin: 20px 0;
+}
+
+.file-actions button {
+    background-color: var(--emerald);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.file-actions button:hover {
+    background-color: var(--emerald-dark);
+}
+
+#encryption-password {
+    padding: 12px;
+    margin-right: 10px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 200px;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+#encryption-password:focus {
+    border-color: #4285f4;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+    background-color: #363636;
+}
+
+.file-actions form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.table-container {
+    background: var(--black-light);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(16, 185, 129, var(--border-opacity));
+}
+
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.file-table th {
+    background-color: var(--black-light);
+    padding: 15px;
+    text-align: left;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(16, 185, 129, var(--border-opacity));
+}
+
+.file-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.file-table tr:hover {
+    background-color: var(--black-hover);
+}
+
+.dropdown-toggle {
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: var(--black-light);
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 150px;
+    border: 1px solid rgba(16, 185, 129, var(--border-opacity));
+}
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    color: var(--white);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+    background-color: var(--black-hover);
+}
+
+.dropdown-menu a, 
+.dropdown-menu .disabled-option {
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    color: var(--white);
+    font-size: 14px;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+#loading-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    width: 300px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.progress {
+    height: 6px;
+    background: #363636;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0;
+    background: #4285f4;
+    transition: width 0.3s ease;
+}
+
+#loading-bar .file-name {
+    font-size: 14px;
+    font-weight: bold;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Modal animations */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modalBackdropFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+}
+
+.modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--black-light);
+    padding: 20px;
+    border-radius: 8px;
+    width: 380px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(16, 185, 129, var(--border-opacity));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s ease;
+    z-index: 1;
+}
+
+.close:hover {
+    color: var(--white);
+}
+
+.settings-confirmation {
+    text-align: center;
+    width: 100%;
+}
+
+.settings-confirmation .warning-icon {
+    color: var(--emerald);
+    font-size: 32px;
+    margin-bottom: 12px;
+    animation: pulse 2s infinite;
+}
+
+.settings-confirmation h2 {
+    color: var(--emerald);
+    margin: 0 0 4px 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.settings-confirmation .settings-message {
+    color: var(--white);
+    font-size: 0.8rem;
+    margin: 0 0 20px 0;
+    opacity: 0.8;
+}
+
+.settings-confirmation form {
+    width: 100%;
+}
+
+.settings-confirmation .input-group {
+    margin: 0 0 12px 0;
+    width: 100%;
+    text-align: left;
+}
+
+.settings-confirmation .input-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    color: var(--white);
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.settings-confirmation .input-label i {
+    color: var(--emerald);
+    font-size: 12px;
+    width: 12px;
+}
+
+.settings-confirmation .password-input-group {
+    position: relative;
+    width: 100%;
+}
+
+.settings-confirmation .form-input {
+    width: 100%;
+    padding: 8px 30px 8px 10px;
+    border: 1px solid var(--emerald-dark);
+    border-radius: 4px;
+    background-color: var(--black);
+    color: var(--white);
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.settings-confirmation .form-input:focus {
+    border-color: var(--emerald);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+    outline: none;
+    background-color: var(--black-light);
+}
+
+.settings-confirmation .toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s ease;
+    font-size: 12px;
+}
+
+.settings-confirmation .toggle-password:hover {
+    color: var(--emerald);
+}
+
+.settings-confirmation .error-message {
+    color: #ff6b6b;
+    font-size: 0.75rem;
+    margin: 8px 0;
+    display: none;
+    text-align: center;
+    width: 100%;
+}
+
+.settings-confirmation .button-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+}
+
+.settings-confirmation .cancel-btn {
+    background: transparent;
+    border: 1px solid var(--emerald-dark);
+    color: var(--white);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.settings-confirmation .cancel-btn:hover {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--emerald);
+}
+
+.settings-confirmation .confirm-btn {
+    background: var(--emerald);
+    color: var(--white);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 120px;
+}
+
+.settings-confirmation .confirm-btn:hover {
+    background: var(--emerald-dark);
+    transform: translateY(-1px);
+}
+
+.settings-confirmation .confirm-btn:active {
+    transform: translateY(0);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+#downloadForm {
+    margin-top: 20px;
+}
+
+#downloadForm label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+#downloadForm input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #363636;
+    color: #e0e0e0;
+}
+
+#downloadForm button {
+    background-color: #4285f4;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#downloadForm button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.password-notice {
+    background-color: #363636;
+    border: 1px solid #444;
+    color: #ff975b;
+    padding: 4px 8px;    /* Further reduced padding */
+    margin: 9px 0;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;           /* Further reduced gap */
+    animation: fadeIn 0.3s ease-in;
+    font-size: 11px;    /* Slightly smaller font */
+    width: fit-content; /* Let the box fit the content */
+    white-space: nowrap;
+}
+
+.password-notice i {
+    font-size: 14px;    /* Match text size */
+    color: #ff975b;
+    flex-shrink: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.error-message {
+    color: #ff6b6b;
+    margin: 10px 0;
+    display: none;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+#downloadForm {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.disabled-option {
+    color: #666 !important;
+    cursor: not-allowed;
+    background: #2a2a2a;
+}
+
+.disabled-option i {
+    opacity: 0.7;
+}
+
+/* Notification system styling */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 2000; /* Increased z-index to ensure it appears above the modal */
+}
+
+.notification__message {
+    background: var(--black-light);
+    border-radius: 8px;
+    padding: 15px 40px 15px 20px;
+    margin: 10px 0;
+    min-width: 300px;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateX(-120%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    border-left: 3px solid var(--emerald);
+}
+
+.notification.received .notification__message {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Border colors for different message types */
+.message--info { 
+    border-left: 4px solid #90dee9;
+    background: linear-gradient(to right, rgba(144, 222, 233, 0.1), transparent);
+}
+.message--success { 
+    border-left: 4px solid var(--emerald);
+    background: linear-gradient(to right, rgba(16, 185, 129, 0.1), transparent);
+}
+.message--warning { 
+    border-left: 4px solid #ff9800;
+    background: linear-gradient(to right, rgba(255, 152, 0, 0.1), transparent);
+}
+.message--danger { 
+    border-left: 4px solid #ff6b6b;
+    background: linear-gradient(to right, rgba(255, 107, 107, 0.1), transparent);
+}
+
+.notification__message h1 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0 0 5px 0;
+    color: var(--white);
+}
+
+.notification__message p {
+    font-size: 0.875rem;
+    margin: 0;
+    color: #b0b0b0;
+}
+
+.notification__message button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.notification__message button:hover {
+    color: #333;
+}
+
+.notification__message button i {
+    font-size: 14px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--black-hover);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--emerald-dark);
+}
+
+/* Delete Modal Specific Styles */
+.delete-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.warning-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #ff6b6b;
+}
+
+.delete-confirmation h2 {
+    color: #ff6b6b;
+}
+
+.delete-confirmation .delete-message {
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.delete-confirmation .file-name {
+    color: #4285f4;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+    word-break: break-all;
+    padding: 0 20px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.button-group button {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button-group .cancel-btn {
+    background-color: var(--black-light);
+    color: var(--white);
+    border: 1px solid var(--emerald-dark);
+}
+
+.button-group .cancel-btn:hover {
+    background-color: rgba(16, 185, 129, 0.1);
+    transform: translateY(-1px);
+}
+
+.button-group .confirm-btn {
+    background-color: #ff6b6b;
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+}
+
+.button-group .confirm-btn:hover {
+    background-color: #ff8787;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+/* Secure Erase Modal Specific Styles */
+.secure-erase .warning-icon {
+    color: #ffd700;
+}
+
+.secure-erase h2 {
+    color: #ffd700;
+}
+
+.secure-erase .confirm-btn {
+    background-color: #ffd700;
+    color: #1a1a1a;
+}
+
+.secure-erase .confirm-btn:hover {
+    background-color: #ffdf33;
+}
+
+.secure-erase .confirm-btn i {
+    margin-right: 8px;
+}
+
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+    }
+}
+
+/* Download Modal Specific Styles */
+.download-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.download-confirmation .warning-icon {
+    color: #4285f4;
+    font-size: 56px;
+    margin-bottom: 25px;
+    animation: pulse 2s infinite;
+}
+
+.download-confirmation h2 {
+    color: #4285f4;
+    margin-bottom: 15px;
+}
+
+.download-confirmation .download-message {
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.download-confirmation .file-name {
+    color: #4285f4;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+    word-break: break-all;
+    padding: 0 20px;
+}
+
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 30px; /* Space for the icon */
+}
+
+.password-input-wrapper .toggle-password {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
+
+.download-confirmation .error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin: -10px auto 15px;
+    max-width: 300px;
+    display: none;
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.download-confirmation .button-group {
+    margin-top: 25px;
+}
+
+.download-confirmation .confirm-btn {
+    background-color: #4285f4;
+    color: white;
+    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.2);
+}
+
+.download-confirmation .confirm-btn:hover {
+    background-color: #5294ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.download-confirmation .confirm-btn i {
+    margin-right: 8px;
+}
+
+.download-confirmation .confirm-btn:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Update the secure-note styles to be more reusable */
+.secure-note {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px auto;
+    text-align: left;
+    display: flex;
+    gap: 15px;
+}
+
+.download-confirmation .secure-note {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.download-confirmation .secure-note i {
+    color: #ffd700;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.download-confirmation .secure-note strong {
+    color: #ffd700;
+}
+
+/* Rename Modal Specific Styles */
+.rename-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.rename-confirmation .warning-icon {
+    color: #4285f4;
+    font-size: 56px;
+    margin-bottom: 25px;
+    animation: pulse 2s infinite;
+}
+
+.rename-confirmation h2 {
+    color: #4285f4;
+    margin-bottom: 15px;
+}
+
+.rename-confirmation .rename-message {
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.rename-confirmation .file-name {
+    color: #4285f4;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+    word-break: break-all;
+    padding: 0 20px;
+}
+
+.input-group {
+    margin: 20px auto;
+    max-width: 300px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background-color: #363636;
+    color: #e0e0e0;
+}
+
+.rename-confirmation .error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin: -10px auto 15px;
+    max-width: 300px;
+    display: none;
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.rename-confirmation .button-group {
+    margin-top: 25px;
+}
+
+.rename-confirmation .confirm-btn {
+    background-color: #4285f4;
+    color: white;
+    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.2);
+}
+
+.rename-confirmation .confirm-btn:hover {
+    background-color: #5294ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.rename-confirmation .confirm-btn i {
+    margin-right: 8px;
+}
+
+.rename-confirmation .confirm-btn:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+}
+
+/* Access Toggle Styles */
+td i.text-success {
+    color: var(--emerald);
+    transition: all 0.3s ease;
+}
+
+td i.text-danger {
+    color: #ff6b6b;
+    transition: all 0.3s ease;
+}
+
+td span {
+    margin-left: 5px;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a[onclick*="toggleAccess"] {
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a[onclick*="toggleAccess"]:hover {
+    background-color: #363636;
+}
+
+.dropdown-menu a[onclick*="toggleAccess"] i {
+    transition: transform 0.3s ease;
+}
+
+.dropdown-menu a[onclick*="toggleAccess"]:hover i {
+    transform: rotate(360deg);
+}
+
+/* Spinner Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.fa-spin {
+    animation: spin 1s linear infinite;
+}
+
+.settings-options {
+    text-align: center;
+    padding: 25px;
+}
+
+.settings-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.settings-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.settings-btn:not([disabled]):hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.settings-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.settings-btn i {
+    font-size: 18px;
+}
+
+.btn-back, .btn-update {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-back {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.btn-update {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-update:hover {
+    background: #45a049;
+}
+
+.modal-notifications {
+    margin-bottom: 15px;
+}
+
+.modal-notification {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: slideIn 0.3s forwards;
+}
+
+.modal-notification.success {
+    background-color: rgba(40, 167, 69, 0.2);
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.modal-notification.error {
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Add to your existing CSS */
+.logs-container {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.logs-list {
+    margin-top: 20px;
+}
+
+.log-entry {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.log-entry:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.log-info {
+    flex-grow: 1;
+}
+
+.log-timestamp {
+    color: #888;
+    font-size: 0.8em;
+}
+
+.log-action {
+    font-weight: 500;
+    color: #4CAF50;
+}
+
+.log-details {
+    margin-top: 5px;
+    color: #ccc;
+}

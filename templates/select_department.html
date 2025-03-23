@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Department</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dept.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="animated-background">
+        <div class="light x1"></div>
+        <div class="light x2"></div>
+        <div class="light x3"></div>
+        <div class="light x4"></div>
+    </div>
+
+    <main class="container">
+        <div class="card glass-effect">
+            <header>
+                <i class="fas fa-building icon-building"></i>
+                <h1>Select Your Department</h1>
+            </header>
+
+            <!-- Flash Messages -->
+            <div class="flash-messages glass-effect">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {% if category == 'success' %}
+                                    <i class="fas fa-check"></i>
+                                {% elif category == 'error' %}
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                {% elif category == 'warning' %}
+                                    <i class="fas fa-exclamation-circle"></i>
+                                {% endif %}
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Department Selection Form -->
+            <form id="departmentForm" action="/select_department" method="post" {% if show_password_form %}style="display: none;"{% endif %}>
+                <div class="department-selector">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="departmentSearch" placeholder="Search departments..." class="search-input">
+                    </div>
+                    
+                    <div class="departments-container">
+                        <div class="departments-grid" id="departmentsGrid">
+                            {% for department in departments %}
+                            <div class="department-card" data-name="{{ department.department_name }}">
+                                <div class="department-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="department-info">
+                                    <h3>{{ department.department_name }}</h3>
+                                </div>
+                                <button type="submit" name="department" value="{{ department.department_name }}" class="select-btn">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="pagination">
+                        <button type="button" class="page-btn" id="prevPage">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="page-info">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+                        <button type="button" class="page-btn" id="nextPage">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Password Form -->
+            <form id="passwordForm" action="/select_department" method="post" {% if not show_password_form %}style="display: none;"{% endif %}>
+                <div class="department-name glass-effect">
+                    <i class="fas fa-building"></i>
+                    <span>Enter password for <strong id="selectedDeptName">{{ department_name }}</strong> Department</span>
+                </div>
+
+                <input type="hidden" name="department_name" id="department_name" value="{{ department_name }}">
+
+                <div class="password-input-wrapper">
+                    <i class="fas fa-key"></i>
+                    <input 
+                        type="password" 
+                        name="password"
+                        id="passwordInput"
+                        class="form-input"
+                        placeholder="Enter department password"
+                        required
+                        autofocus
+                    >
+                    <button type="button" class="toggle-password" onclick="togglePassword()">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" id="backButton" class="btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back</span>
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        <span>Submit</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <footer class="footer-actions glass-effect">
+            <a href="{{ url_for('logout') }}" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+            <button class="btn-add-dept" onclick="handleAddDepartment()">
+                <i class="fas fa-plus"></i>
+                <span>Add Department</span>
+            </button>
+        </footer>
+    </main>
+
+    <!-- Add Department Modal -->
+    <div id="addDepartmentModal" class="modal">
+        <div class="modal-content glass-effect">
+            <span class="close">&times;</span>
+            <div class="add-department-form">
+                <h2><i class="fas fa-building"></i> Add New Department</h2>
+                
+                <form id="addDepartmentForm" method="POST" action="{{ url_for('add_department') }}">
+                    <div class="form-group">
+                        <div class="input-container">
+                            <i class="fas fa-tag"></i>
+                            <input type="text" name="department_name" class="form-input" placeholder="Department Name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-container">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" class="form-input" placeholder="Department Password" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-container">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="confirm_password" class="form-input" placeholder="Confirm Password" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="confirm" required>
+                            <span>I confirm this department creation</span>
+                        </label>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-cancel">Cancel</button>
+                        <button type="submit" class="btn-create">Create Department</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/depts.js') }}"></script>
+    <script>
+        // Department search and pagination functionality
+        const departmentsPerPage = 6;
+        let currentPage = 1;
+        let filteredDepartments = [];
+
+        function filterDepartments() {
+            const searchInput = document.getElementById('departmentSearch');
+            const searchTerm = searchInput.value.toLowerCase();
+            const departmentCards = document.querySelectorAll('.department-card');
+            
+            filteredDepartments = Array.from(departmentCards).filter(card => {
+                const departmentName = card.dataset.name.toLowerCase();
+                return departmentName.includes(searchTerm);
+            });
+
+            updatePagination();
+            showCurrentPage();
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredDepartments.length / departmentsPerPage);
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('currentPage').textContent = currentPage;
+            
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+
+        function showCurrentPage() {
+            const startIndex = (currentPage - 1) * departmentsPerPage;
+            const endIndex = startIndex + departmentsPerPage;
+            
+            filteredDepartments.forEach((card, index) => {
+                if (index >= startIndex && index < endIndex) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                showCurrentPage();
+                updatePagination();
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredDepartments.length / departmentsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                showCurrentPage();
+                updatePagination();
+            }
+        });
+
+        document.getElementById('departmentSearch').addEventListener('input', () => {
+            currentPage = 1;
+            filterDepartments();
+        });
+
+        // Password visibility toggle
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleButton = document.querySelector('.toggle-password i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.classList.remove('fa-eye');
+                toggleButton.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.classList.remove('fa-eye-slash');
+                toggleButton.classList.add('fa-eye');
+            }
+        }
+
+        // Initialize the department list
+        document.addEventListener('DOMContentLoaded', () => {
+            filteredDepartments = Array.from(document.querySelectorAll('.department-card'));
+            updatePagination();
+            showCurrentPage();
+        });
+    </script>
+</body>
+</html>

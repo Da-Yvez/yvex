@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Wehn debugging always use the python running console to show debug stuff instead of browser console
